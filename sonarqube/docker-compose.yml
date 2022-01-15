@@ -2,16 +2,18 @@ services:
   sonarqube:
     image: sonarqube:${SONAQUBE_VERSION}
     container_name: sonarqube
+    platform: linux/x86_64
     depends_on:
       - sonarqube_db
     ports:
       - "9000:9000"
-    networks:
-      - sonarnet
+    # networks:
+    #   - sonarnet
     environment:
       SONAR_JDBC_URL: ${SONAR_DB_URL}
       SONAR_JDBC_USERNAME: ${SONAR_DB_USER}
       SONAR_JDBC_PASSWORD: ${SONAR_DB_PASS}
+      SONAR_SEARCH_JAVAADDITIONALOPTS: "-Dbootstrap.system_call_filter=false"
     volumes:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
@@ -22,8 +24,9 @@ services:
   sonarqube_db:
     image: postgres:${POSTGRES_VERSION}
     container_name: sonarqube_db
-    networks:
-      - sonarnet
+    platform: linux/x86_64
+    # networks:
+    #   - sonarnet
     environment:
       POSTGRES_USER: ${SONAR_DB_USER}
       POSTGRES_PASSWORD: ${SONAR_DB_PASS}

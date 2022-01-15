@@ -3,6 +3,7 @@ services:
   nexus3:
     image: sonatype/nexus3:${NEXUS_VERSION}
     container_name: nexus3
+    platform: linux/x86_64
     ports:
       - "8081:8081"
     volumes:
