@@ -3,14 +3,13 @@ services:
   nexus3:
     image: sonatype/nexus3:${NEXUS_VERSION}
     container_name: nexus3
-    platform: linux/x86_64
+    platform: linux/amd64
     ports:
       - "8081:8081"
     volumes:
-      - nexus_data:/nexus-data
+      - ${VOLUME_BASE}/nexus_data:/nexus-data
     environment:
       NEXUS_CONTEXT: nexus
       INSTALL4J_ADD_VM_PARAMS : "-Xms2703m -Xmx2703m -XX:MaxDirectMemorySize=2703m"
     restart: always
-volumes: 
-  nexus_data: {}
+      
