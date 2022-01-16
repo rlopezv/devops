@@ -2,35 +2,35 @@ services:
   gilab:
     image: 'gitlab/gitlab-ce:${GITLAB_VERSION}'
     container_name: gitlab
-    platform: linux/x86_64
+    #platform: linux/x86_64
     restart: always
-    #hostname: 'gitlab.example.com'
+    hostname: 'gitlab.devops.local'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        # external_url 'https://gitlab.example.com'
+        external_url 'http://gitlab.devops.local'
         # Add any other gitlab.rb configuration here, each on its own line
-        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+        gitlab_rails['gitlab_shell_ssh_port'] = 22
+        nginx['enable'] = false
+
     ports:
-      - '80:80'
-      - '443:443'
+      - '1080:80'
+      - '1443:443'
       - '2222:22'
     volumes:
-      - ${VOLUME_BASE}/gitlab_config:/etc/gitlab'
-      - ${VOLUME_BASE}/gitlab_logs:/var/log/gitlab'
-      - ${VOLUME_BASE}/gitlab_data:/var/opt/gitlab'
+      - ${VOLUME_BASE}/config:/etc/gitlab'
+      - ${VOLUME_BASE}/logs:/var/log/gitlab'
+      - ${VOLUME_BASE}/data:/var/opt/gitlab'
     shm_size: '256m'
   # gitlab-runner:
-  #   image: ${VOLUME_BASE}/gitlab-runner:${GITLAB_RUNNER_VERSION}
+  #   image: gitlab/gitlab-runner:${GITLAB_RUNNER_VERSION}
   #   container_name: gitlab-runner 
   #   volumes:
   #     - /var/run/docker.sock:/var/run/docker.sock
   #     - ${VOLUME_BASE}/gitlab_runner_config:/etc/gitlab-runner
   #   restart: unless-stopped
 
-# volumes:
-#   redis-data:
-#   postgresql-data:
-#   gitlab_data:
-#   gitlab_config:
-#   gitlab_logs:
-#   gitlab_runner_config:
+volumes:
+  gitlab_data:
+  gitlab_config:
+  gitlab_logs:
+  gitlab_runner_config:
