@@ -1,3 +1,4 @@
+version: '3'
 services:
   gilab:
     image: 'gitlab/gitlab-ce:${GITLAB_VERSION}'
@@ -10,7 +11,7 @@ services:
         external_url 'http://gitlab.devops.local'
         # Add any other gitlab.rb configuration here, each on its own line
         gitlab_rails['gitlab_shell_ssh_port'] = 22
-        nginx['enable'] = false
+        # nginx['enable'] = false
 
     ports:
       - '1080:80'
@@ -21,13 +22,13 @@ services:
       - ${VOLUME_BASE}/logs:/var/log/gitlab'
       - ${VOLUME_BASE}/data:/var/opt/gitlab'
     shm_size: '256m'
-  # gitlab-runner:
-  #   image: gitlab/gitlab-runner:${GITLAB_RUNNER_VERSION}
-  #   container_name: gitlab-runner 
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - ${VOLUME_BASE}/gitlab_runner_config:/etc/gitlab-runner
-  #   restart: unless-stopped
+  gitlab-runner:
+    image: gitlab/gitlab-runner:${GITLAB_RUNNER_VERSION}
+    container_name: gitlab-runner 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${VOLUME_BASE}/gitlab_runner_config:/etc/gitlab-runner
+    restart: unless-stopped
 
 volumes:
   gitlab_data:
