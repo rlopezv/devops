@@ -1,6 +1,10 @@
+
 ## DevOps infrastructure for lab development
 
-This repository includes the required elements to creeate a CI/CD enviroment in a lab environment. It' based in docker-compose that provides a flexible and customizable way to adapt it to the environment requirements.
+
+This repository contains instructions for creating a basic DevOps infrastructure able to implement CI/CD pipelines.
+
+In order to allow to create such infrastructure in lab environments docker has been used as runtime for them creating the required docker-compose files for each one.
 
 The tools included are:
 
@@ -16,15 +20,23 @@ For every docker-compose file an *.env* file has been included that will allow t
 
 Since in most cases only basic tool installation is provided, it´s recommended to reviw the tool documentation. In the reference section links for every tool are provided.
 
-## Requirements
+# General configuration
 
-Since the tools are managed through docker-compose files the execution environment must met the following requirements:
-
-- Tools installed 
-  - docker  
-  - docker-compose
+If the environment is instantiated using only one machine it will be required to include the DNS entries required to resolve the DNS for each tool (i.e. modifying /etc/hosts file in osx or linux distributions)
 
 The host system for docker and the images used must be supported, *amd64* is the recommended one.
+
+# Requirements
+ 
+Host Machine
+
+- Docker
+- Docker Compose
+
+Internet Access.
+
+# Gitlab
+This repository includes the required elements to creeate a CI/CD enviroment in a lab environment. It' based in docker-compose that provides a flexible and customizable way to adapt it to the environment requirements.
 
 ### Gitlab
 
