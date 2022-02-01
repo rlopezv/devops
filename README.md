@@ -141,18 +141,17 @@ sudo gitlab-runner start
 
 Then an executor can be registered in the runner. Since there are several options and executor types is recomended to check GitLab [documentation](https://docs.gitlab.com/runner/executors/)
 
-Oneliner for registering an executor.
+Oneliner for registering an executor (docker based)
 
 ```ssh
 sudo gitlab-runner register \
   --non-interactive \
   --url "https://gitlab.com/" \
-  --registration-token "PROJECT_REGISTRATION_TOKEN" \
+  --registration-token "$REGISTRATION_TOKEN" \
   --executor "docker" \
   --docker-image alpine:latest \
   --description "docker-runner" \
-  --maintenance-note "Free-form maintainer notes about this runner" \
-  --tag-list "docker,aws" \
+  --tag-list "docker" \
   --run-untagged="true" \
   --locked="false" \
   --access-level="not_protected"
