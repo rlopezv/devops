@@ -1,0 +1,81 @@
+version: '3.4'
+
+services:
+  gitlab_redis:
+    restart: unless-stopped
+    image: redis:6.2.6
+    container_name: gitlab_redis
+    command:
+    - --loglevel warning
+    volumes:
+    - ${VOLUME_BASE}/redis:/var/lib/redis:Z
+
+  gitlab_postgresql:
+    restart: unless-stopped
+    build:
+      context: dockerfiles/postgre
+    container_name: gitlab_postgresql
+    ports:
+    - 5432:5432
+    volumes:
+    - ${VOLUME_BASE}/postgresql:/var/lib/postgresql:Z
+    environment:
+    - POSTGRES_DB=gitlab
+    - POSTGRES_PASSWORD=gitlab
+    - POSTGRES_DB=gitlabbd
+
+  gilab:
+    image: 'gitlab/gitlab-ce:${GITLAB_VERSION}'
+    container_name: gitlab
+    platform: linux/x86_64
+    restart: unless-stopped
+    depends_on:
+      - gitlab_redis
+      - gitlab_postgresql
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2222:22"
+    volumes:
+      - ${VOLUME_BASE}/gitlab/config:/etc/gitlab:Z
+      - ${VOLUME_BASE}/gitlab/logs:/var/log/gitlab:Z
+      - ${VOLUME_BASE}/gitlab/data:/var/opt/gitlab:Z
+    environment:
+      GITLAB_ROOT_PASSWORD: "rootpassword" 
+      GITLAB_OMNIBUS_CONFIG: |
+        #external_url 'http://gitlab.devops.local:1080'
+        # Add any other gitlab.rb configuration here, each on its own line
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
+        gitlab_rails['initial_root_password'] = "initialpassword"
+        gitlab_rails['initial_shared_runners_registration_token'] = 'gitlabrunner_t0ken'
+        # Disable the built-in Postgres
+        postgresql['enable'] = false
+        # Fill in the connection details for database.yml
+        gitlab_rails['db_adapter'] = 'postgresql'
+        gitlab_rails['db_database'] = 'gitlabdb'
+        gitlab_rails['db_encoding'] = 'utf8'
+        gitlab_rails['db_host'] = 'gitlab_postgresql'
+        gitlab_rails['db_port'] = '5432'
+        gitlab_rails['db_username'] = 'gitlab'
+        gitlab_rails['db_password'] = 'gitlab'
+        # Fill in redis
+        # Disable the bundled Redis
+        redis['enable'] = false
+        # Redis via TCP
+        gitlab_rails['redis_host'] = 'gitlab_rails'
+        gitlab_rails['redis_port'] = 6379
+        # OR Redis via Unix domain sockets
+        gitlab_rails['redis_socket'] = '/tmp/redis.sock' # defaults to /var/opt/gitlab/redis/redis.socket
+        # Password to Authenticate to alternate local Redis if required
+        #gitlab_rails['redis_password'] = '<redis_password>'
+        ## Disable everything else
+        #gitlab_rails['enable'] = false
+        #sidekiq['enable'] = false
+        #puma['enable']=false
+        registry['enable'] = false
+        #gitaly['enable'] = false
+        #gitlab_workhorse['enable'] = false
+        nginx['enable'] = false
+        prometheus_monitoring['enable'] = false
+        gitlab_rails['auto_migrate'] = false
+
