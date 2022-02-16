@@ -139,6 +139,20 @@ sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab
 sudo gitlab-runner start
 ```
 
+#For Raspberry Pi Linux arm64
+
+```ssh
+sudo curl -L --output /usr/local/bin/gitlab-runner "https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-arm64"
+
+sudo chmod +x /usr/local/bin/gitlab-runner
+
+sudo useradd --comment 'GitLab Runner' --create-home gitlab-runner --shell /bin/bash
+
+sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner
+
+sudo gitlab-runner start
+```
+
 Then an executor can be registered in the runner. Since there are several options and executor types is recomended to check GitLab [documentation](https://docs.gitlab.com/runner/executors/)
 
 Oneliner for registering an executor (docker based)
