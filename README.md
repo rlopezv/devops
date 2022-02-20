@@ -1,7 +1,6 @@
 
 ## DevOps infrastructure for lab development
 
-
 This repository contains instructions for creating a basic DevOps infrastructure able to implement CI/CD pipelines.
 
 In order to allow to create such infrastructure in lab environments docker has been used as runtime for them creating the required docker-compose files for each one.
