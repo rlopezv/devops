@@ -1,81 +1,19 @@
-version: '3'
+version: '3.7'
 services:
   gitlab:
     image: 'gitlab/gitlab-ce:${GITLAB_VERSION}'
     container_name: gitlab
-    #platform: linux/x86_64
     restart: unless-stopped
-    hostname: 'gitlab.devops.local'
     environment:
-      GITLAB_ROOT_PASSWORD: ${GITLAB_ROOT_PASS}
-      TZ: Europe/Madrid
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://gitlab.devops.local:1080'
         # Add any other gitlab.rb configuration here, each on its own line
-        # postgresql['enable'] = false
-        # gitlab_rails['db_adapter'] = "postgresql"
-        # gitlab_rails['db_encoding'] = "unicode"
-        # gitlab_rails['db_database'] = "gitlabdb"
-        # gitlab_rails['db_username'] = "gitlab"
-        # gitlab_rails['db_password'] = "gitlab"
-        # gitlab_rails['db_host'] = "gitlab_db"
-        # gitlab_rails['db_port'] = 5432
-        redis['enable'] = false
-        gitlab_rails['redis_host'] = 'gtilab_redis'
-        gitlab_rails['redis_port'] = '6379'
-        gitlab_rails['gitlab_shell_ssh_port'] = 2222
-        gitlab_rails['gitlab_email_enabled'] = false
-        gitlab_rails['auto_migrate'] = false
-        letsencrypt['enabled'] = false
-        # nginx['enable'] = false
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
     ports:
-      - '1080:1080'
+      - '1080:80'
       - '1443:443'
-      - '2222:22'
+      - '2224:22'
     volumes:
       - ${VOLUME_BASE}/gitlab/config:/etc/gitlab
-      - ${VOLUME_BASE}/gitlab/logs:/var/log/gitlab
-      - ${VOLUME_BASE}/gitlab/data:/var/opt/gitlab
-    depends_on:
-      - gitlab_db
-      - gtilab_redis
-    networks:
-      - gitlab_network
-    shm_size: '256m'
-  gitlab-runner:
-    image: gitlab/gitlab-runner:${GITLAB_RUNNER_VERSION}
-    container_name: gitlab-runner 
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${VOLUME_BASE}/gitlab_runner/config:/etc/gitlab-runner
-    restart: unless-stopped
-    networks:
-      - gitlab_network
-    depends_on:
-      - gitlab
+      - ${VOLUME_BASE}/gitlab/logs:/var/log/gitlab'
+      - ${VOLUME_BASE}/gitlab/data:/var/opt/gitlab'
 
-  gitlab_db:
-    image: postgres:${POSTGRES_VERSION}
-    container_name: gitlab_db
-    #platform: linux/x86_64
-    networks:
-     - gitlab_network
-    environment:
-      POSTGRES_USER: ${GITLAB_DB_USER}
-      POSTGRES_PASSWORD: ${GITLAB_DB_PASS}
-      POSTGRES_DB: gitlabdb
-    volumes:
-      - ${VOLUME_BASE}/gitlab/postgresql:/var/lib/postgresql
-      # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
-      - ${VOLUME_BASE}/gitlab/postgresql_data:/var/lib/postgresql/data
-
-
-  gtilab_redis:
-    restart: always
-    image: redis:5-alpine
-    container_name: gtilab_redis
-    networks:
-     - gitlab_network
-networks:
-  gitlab_network:
-    name: gitlab_network

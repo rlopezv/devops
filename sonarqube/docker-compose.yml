@@ -26,26 +26,9 @@ services:
   sonarqube_db:
     image: postgres:${POSTGRES_VERSION}
     container_name: sonarqube_db
-    #platform: linux/x86_64
-    # networks:
-    #   - sonarnet
     environment:
       POSTGRES_USER: ${SONAR_DB_USER}
       POSTGRES_PASSWORD: ${SONAR_DB_PASS}
     volumes:
-      - ${VOLUME_BASE}/postgresql:/var/lib/postgresql
       # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
-      - ${VOLUME_BASE}/postgresql_data:/var/lib/postgresql/data
-
-networks:
-  sonarnet:
-    driver: bridge
-
-volumes:
-  sonarqube_data:
-  sonarqube_extensions:
-  sonarqube_logs:
-  sonarqube_temp:
-  sonarqube_bundled-plugins:
-  postgresql:
-  postgresql_data:
+      - ${VOLUME_BASE}/sonar/postgresql/data:/var/lib/postgresql/data

@@ -1,10 +1,15 @@
 version: '3'
+
 services:
-  gitlab-runner:
-    image: gitlab/gitlab-runner:${GITLAB_RUNNER_VERSION}
-    container_name: gitlab-runner 
+  nexus:
+    image: sonatype/nexus3:${NEXUS_VERSION}
+    container_name: nexus3
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${VOLUME_BASE}/gitlab_runner_config:/etc/gitlab-runner
+      - ${VOLUME_BASE}/nexus:/nexus-data
+    ports:
+      - "8081:8081"
+      - "6000:6000"
+      - "6001:6001"
     restart: unless-stopped
+
 
